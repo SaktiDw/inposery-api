@@ -16,5 +16,8 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view("index", $data = ['Laravel' => app()->version()]);
 });
+Route::get('/tes', function () {
+    return ['Laravel' => app()->version()];
+});
 
 // require __DIR__ . '/auth.php';

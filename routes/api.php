@@ -24,12 +24,12 @@ use Laravel\Socialite\Facades\Socialite;
 |
 */
 
-Route::get('/userToken', function (Request $request) {
-    // $token = auth()->user()->createToken('auth_token')->plainTextToken;
-    return response()->json(["tes" => auth()->user()]);
-    // return response()->json(['user' => auth()->user()], 200);;
+// Route::get('/userToken', function (Request $request) {
+//     // $token = auth()->user()->createToken('auth_token')->plainTextToken;
+//     return response()->json(["tes" => auth()->user()]);
+//     // return response()->json(['user' => auth()->user()], 200);;
 
-});
+// });
 
 Route::post('/login', LoginController::class);
 Route::post('/register', RegisterController::class);
