@@ -75,5 +75,6 @@
     "post-install-cmd": [
         "php artisan clear-compiled",
         "chmod -R 777 public/"
-    ]
+    ],
+    "ext-pdo_sqlite": "*"
 }
