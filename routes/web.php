@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\User;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -14,7 +15,8 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view("index", $data = ['Laravel' => app()->version()]);
+    $user = User::all();
+    return view("index", ["user" => $user]);
 });
 Route::get('/tes', function () {
     return ['Laravel' => app()->version()];

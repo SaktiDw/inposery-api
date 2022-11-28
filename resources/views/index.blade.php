@@ -9,7 +9,7 @@
 </head>
 
 <body>
-    {{auth()->user()->id}}
+    {{$user}}
 </body>
 
 </html>
