@@ -1,6 +1,7 @@
 <?php
 
-use App\Models\User;
+use App\Http\Controllers\ProfileController;
+use App\Models\Store;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -15,11 +16,18 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    $user = User::all();
-    return view("index", ["user" => $user]);
-});
-Route::get('/tes', function () {
-    return ['Laravel' => app()->version()];
+    return view('welcome');
 });
 
-// require __DIR__ . '/auth.php';
+Route::get('/dashboard', function () {
+    $store = Store::all();
+    return view('dashboard', ['store' => $store]);
+})->middleware(['auth', 'verified'])->name('dashboard');
+
+Route::middleware('auth')->group(function () {
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+});
+
+require __DIR__ . '/auth.php';
