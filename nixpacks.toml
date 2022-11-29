@@ -1,5 +1,5 @@
 [phases.install]
-cmds = ["mkdir -p /var/log/nginx && mkdir -p /var/cache/nginx", "composer install --ignore-platform-reqs", "npm install", "npm run dev"]
+cmds = ["mkdir -p /var/log/nginx && mkdir -p /var/cache/nginx", "composer install --ignore-platform-reqs"]
 
 [phases.build]
 cmds = ["npm run prod"]
