@@ -10,9 +10,8 @@
 
     <!-- Fonts -->
     <link rel="stylesheet" href="https://fonts.bunny.net/css2?family=Nunito:wght@400;600;700&display=swap">
-    <link rel="stylesheet" href="/resources/css/uicons-regular-rounded/webfonts/uicons-regular-rounded.css">
     <!-- Scripts -->
-    @vite(['resources/css/app.css',"/resources/css/uicons-regular-rounded/webfonts/uicons-regular-rounded.css", 'resources/js/app.js'])
+    @vite(['resources/css/app.css',"resources/css/uicons-regular-rounded/webfonts/uicons-regular-rounded.css", 'resources/js/app.js'])
 </head>
 
 <body class="font-sans antialiased">
