@@ -47,19 +47,19 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::apiResource('/receipts', ReceiptController::class);
     Route::get('getAllStoresTransaction', [DashboardController::class, 'getAllStoresTransaction']);
     Route::get('getAllStoreTransaction', [DashboardController::class, 'getAllStoreTransaction']);
-    Route::get('/test', function (Request $request)
-    {
-        $transaction = QueryBuilder::for(Transaction::class)
-            ->with(["product"])
-            ->allowedFilters([
-                AllowedFilter::partial('product.name', null), 'store_id'
-            ])
-            ->defaultSort('created_at')
-            ->allowedSorts(['name', 'created_at'])
-            ->paginate($request->limit)
-            ->appends(request()->query());
-        return $transaction;
-    });
+});
+Route::get('/test', function (Request $request)
+{
+    $transaction = QueryBuilder::for(Transaction::class)
+        ->with(["product"])
+        ->allowedFilters([
+            AllowedFilter::partial('product.name', null), 'store_id'
+        ])
+        ->defaultSort('created_at')
+        ->allowedSorts(['name', 'created_at'])
+        ->paginate($request->limit)
+        ->appends(request()->query());
+    return $transaction;
 });
 
 // require __DIR__ . '/auth.php';
