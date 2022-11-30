@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Store;
 use App\Models\Transaction;
+use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
 {
