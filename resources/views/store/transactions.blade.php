@@ -5,6 +5,7 @@
             <x-search />
         </div>
         @php
+
         $columns = [
         (object) [
         'key'=>'id',
