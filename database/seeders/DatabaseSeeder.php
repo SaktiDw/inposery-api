@@ -20,7 +20,7 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        User::factory(10)->create();
+        // User::factory(10)->create();
         Store::factory(10)->create();
         $product = Product::factory(1000)->create();
         $product->map(function (Product $item) {

@@ -2,6 +2,6 @@
 nixPkgs = ["php81", "perl", "nginx", "php81Packages.composer","nodejs-16_x", "npm-8_x"]
 
 [phases.install]
-cmds = ["mkdir -p /var/log/nginx && mkdir -p /var/cache/nginx", "composer install --ignore-platform-reqs", "php artisan storage:link", "npm install", "npm run build"]
+cmds = ["mkdir -p /var/log/nginx && mkdir -p /var/cache/nginx", "composer install --ignore-platform-reqs", "php artisan storage:link", "php artisan db:seed","npm install", "npm run build"]
 
 
