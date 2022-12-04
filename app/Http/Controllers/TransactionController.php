@@ -52,6 +52,7 @@ class TransactionController extends Controller
             "qty" => $request->qty,
             "price" => $request->price,
             "discount" => $request->discount,
+            "total" => $request->qty * $request->price,
             "description" => $request->description,
             "product_id" => $request->product_id,
             "store_id" => $request->store_id,

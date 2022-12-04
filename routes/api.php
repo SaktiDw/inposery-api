@@ -10,8 +10,10 @@ use App\Http\Controllers\ReceiptController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\StoreController;
 use App\Http\Controllers\TransactionController;
+use App\Models\Store;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 use Laravel\Socialite\Facades\Socialite;
 use Spatie\QueryBuilder\AllowedFilter;
@@ -45,11 +47,11 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::apiResource('/products', ProductController::class);
     Route::apiResource('/transactions', TransactionController::class);
     Route::apiResource('/receipts', ReceiptController::class);
-    Route::get('getAllStoresTransaction', [DashboardController::class, 'getAllStoresTransaction']);
-    Route::get('getAllStoreTransaction', [DashboardController::class, 'getAllStoreTransaction']);
+    Route::get('/getAllStoresTransaction', [DashboardController::class, 'getAllStoresTransaction']);
+    Route::get('/getAllStoreTransaction/{store}', [DashboardController::class, 'getAllStoreTransaction']);
 });
-Route::get('/test', function (Request $request)
-{
+
+Route::get('/test', function (Request $request) {
     $transaction = QueryBuilder::for(Transaction::class)
         ->with(["product"])
         ->allowedFilters([
@@ -62,4 +64,10 @@ Route::get('/test', function (Request $request)
     return $transaction;
 });
 
+Route::get('/ko', function () {
+    $store = Transaction::whereIn('store_id', [3, 9])->groupBy('year', 'month', 'day')->get();
+    return $store;
+});
 // require __DIR__ . '/auth.php';
+// ->groupBy(DB::raw('Date(created_at)'))
+// where('created_at', '>=', \Carbon\Carbon::now()->subMonth())

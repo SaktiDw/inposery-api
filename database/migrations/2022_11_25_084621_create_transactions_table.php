@@ -21,6 +21,7 @@ return new class extends Migration
             $table->integer("qty");
             $table->integer("price");
             $table->integer("discount");
+            $table->integer('total');
             $table->text("description");
             $table->foreignIdFor(Product::class);
             $table->foreignIdFor(Store::class);

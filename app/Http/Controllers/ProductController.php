@@ -7,10 +7,15 @@ use App\Models\Store;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
+use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\QueryBuilder;
 
 class ProductController extends Controller
 {
+    public function qty($query, $qty)
+    {
+        return $query->where('qty', '<', $qty);
+    }
     /**
      * Display a listing of the resource.
      *
@@ -20,7 +25,7 @@ class ProductController extends Controller
     {
         $product = QueryBuilder::for(Product::class)
             ->with(["media", "store"])
-            ->allowedFilters(['name', 'qty', 'store_id'])
+            ->allowedFilters(['name', 'store_id', AllowedFilter::scope('qty'),])
             ->defaultSort('created_at')
             ->allowedSorts(['name', 'created_at'])
             ->paginate($request->limit)

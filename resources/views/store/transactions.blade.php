@@ -30,11 +30,12 @@
         'title'=>'Type',
         ],
         (object) [
-        'key'=>'create_at',
+        'key'=>'created_at',
         'title'=>'Date',
         ],
         ];
         @endphp
         <x-table :data="$data" :columns="$columns" />
+        {{$data->links()}}
     </div>
 </x-store-layout>
