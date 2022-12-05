@@ -23,7 +23,7 @@ class TransactionController extends Controller
                 AllowedFilter::partial('product.name', null), 'store_id'
             ])
             ->defaultSort('created_at')
-            ->allowedSorts(['name', 'created_at'])
+            ->allowedSorts(['price', 'type', 'created_at'])
             ->paginate($request->limit)
             ->appends(request()->query());
         return $transaction;

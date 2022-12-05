@@ -51,7 +51,7 @@ class StoreController extends Controller
         //     });
         // }))->orderBy($sortField, $sortDirection)->paginate(16);
 
-        return json_encode($store);
+        return $store;
     }
 
     /**
@@ -88,9 +88,11 @@ class StoreController extends Controller
      */
     public function show(Store $store)
     {
-        $store->transaction;
+        // $store->transaction;
+        if (auth()->user()->id != $store->user_id) return abort(403, "You don't have access to this Store! Stay away!!!");
         $store->getFirstMediaUrl();
         return $store;
+        // return auth()->user()->id;
     }
 
     /**

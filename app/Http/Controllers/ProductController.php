@@ -16,6 +16,12 @@ class ProductController extends Controller
     {
         return $query->where('qty', '<', $qty);
     }
+    public function storeId($query, $store_id)
+    {
+        $store = Store::findOrFail($store_id);
+        if ($store->user_id != auth()->user()->id) return abort(403);
+        return $query->where('store_id', '=', $store_id);
+    }
     /**
      * Display a listing of the resource.
      *
@@ -23,6 +29,8 @@ class ProductController extends Controller
      */
     public function index(Request $request)
     {
+        $store = Store::find($request->filter['store_id']) ?? abort(404, "Store that u looking for doesn't exist!!");
+        if ($store->user_id != auth()->user()->id) return abort(403, "You don't have access to this Store! Stay away!!!");
         $product = QueryBuilder::for(Product::class)
             ->with(["media", "store"])
             ->allowedFilters(['name', 'store_id', AllowedFilter::scope('qty'),])

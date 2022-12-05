@@ -48,7 +48,9 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::apiResource('/transactions', TransactionController::class);
     Route::apiResource('/receipts', ReceiptController::class);
     Route::get('/getAllStoresTransaction', [DashboardController::class, 'getAllStoresTransaction']);
+    Route::get('/getTopProduct', [DashboardController::class, 'getTopProduct']);
     Route::get('/getAllStoreTransaction/{store}', [DashboardController::class, 'getAllStoreTransaction']);
+    Route::get('/getModalSales', [DashboardController::class, 'getModalSales']);
 });
 
 Route::get('/test', function (Request $request) {

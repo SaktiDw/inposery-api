@@ -52,29 +52,64 @@ class DashboardController extends Controller
     }
 
 
-    public function getAllStoreTransaction($id, Request $request)
+
+    public function getTopProduct(Request $request)
     {
-        // $store->with("transaction")->get();
-
-        $from = "2022-12-01T00:00:00.000000Z";
-        $to = "2022-12-03T00:00:00.000000Z";
-        $transaction = Transaction::select(
-            DB::raw('SUM(total) as total'),
-            DB::raw("EXTRACT(YEAR FROM `created_at`) as year"),
-            DB::raw("EXTRACT(MONTH FROM `created_at`) as month"),
-            DB::raw("EXTRACT(DAY FROM `created_at`) as day"),
-            'created_at'
-        )
-            ->where('store_id', $id)
-            ->whereBetween('created_at', [$request->from, $request->to])
-            ->groupBy('year', 'month', 'day', 'created_at', 'type')
+        $from = isset($request->from) ? Carbon::parse($request->from) : Carbon::parse("2000-01-01T00:00:00.000000Z");
+        $to = isset($request->to) ? Carbon::parse($request->to) : Carbon::now();
+        $transaction = Transaction::with('product')
+            ->whereIn('store_id', explode(',', $request->id))
+            ->where('type', $request->type)
+            ->where('created_at', '>=', $from)
+            ->where('created_at', '<=', $to)
+            ->select(DB::raw('SUM(total) as total'), 'product_id')
+            ->groupBy(
+                'product_id'
+            )->orderBy('total', 'DESC')
+            ->limit($request->limit ?? 5)
             ->get();
-
+        return $transaction;
+    }
+    public function getModalSales(Request $request)
+    {
+        $from = isset($request->from) ? Carbon::parse($request->from) : Carbon::parse("2000-01-01T00:00:00.000000Z");
+        $to = isset($request->to) ? Carbon::parse($request->to) : Carbon::now();
+        $transaction =
+            Transaction::whereIn('store_id', explode(',', $request->id))
+            // ->where('type', $request->type)
+            ->where('created_at', '>=', $from)
+            ->where('created_at', '<=', $to)
+            ->select(DB::raw('SUM(total) as total'), 'type')
+            ->groupBy(
+                'type'
+            )->orderBy('total', 'DESC')
+            // ->paginate($request->limit ?? 5);
+            ->get($request->limit);
         return $transaction;
     }
 }
 
 
+// public function getAllStoreTransaction($id, Request $request)
+// {
+//     // $store->with("transaction")->get();
+
+//     $from = "2022-12-01T00:00:00.000000Z";
+//     $to = "2022-12-03T00:00:00.000000Z";
+//     $transaction = Transaction::select(
+//         DB::raw('SUM(total) as total'),
+//         DB::raw("EXTRACT(YEAR FROM `created_at`) as year"),
+//         DB::raw("EXTRACT(MONTH FROM `created_at`) as month"),
+//         DB::raw("EXTRACT(DAY FROM `created_at`) as day"),
+//         'created_at'
+//     )
+//         ->where('store_id', $id)
+//         ->whereBetween('created_at', [$request->from, $request->to])
+//         ->groupBy('year', 'month', 'day', 'created_at', 'type')
+//         ->get();
+
+//     return $transaction;
+// }
 
 // ->where('type', $request->type)
 // ->where('created_at', '>=', $from)
