@@ -51,8 +51,13 @@ class Store extends Model implements HasMedia
     {
         $this
             ->addMediaConversion('preview')
+            ->fit(Manipulations::FIT_CROP, 300, 300);
+        // ->nonQueued();
+        $this
+            ->addMediaConversion('blur')
             ->fit(Manipulations::FIT_CROP, 300, 300)
-            ->nonQueued();
+            ->blur(50);
+        // ->nonQueued();
     }
 
     public function getFullUrlMediaAttribute()

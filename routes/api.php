@@ -70,6 +70,7 @@ Route::get('/ko', function () {
     $store = Transaction::whereIn('store_id', [3, 9])->groupBy('year', 'month', 'day')->get();
     return $store;
 });
+Route::get('/asd', [DashboardController::class, 'Dashboard']);
 // require __DIR__ . '/auth.php';
 // ->groupBy(DB::raw('Date(created_at)'))
 // where('created_at', '>=', \Carbon\Carbon::now()->subMonth())
