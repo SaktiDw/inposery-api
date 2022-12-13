@@ -72,7 +72,7 @@ class ReceiptController extends Controller
         //     ->paginate($request->limit)
         //     ->appends(request()->query());
 
-        return $receipt;
+        return $receipt->load(['store', 'store.media']);
     }
 
     /**

@@ -42,32 +42,39 @@ class TransactionController extends Controller
             "qty" => "required|numeric",
             "price" => "required|numeric",
             "discount" => "required|numeric",
-            "description" => "required|max:250",
+            "description" => "max:250",
             "product_id" => "required",
             "store_id" => "required",
         ]);
 
-        $transaction = Transaction::create([
-            "type" => $request->type,
-            "qty" => $request->qty,
-            "price" => $request->price,
-            "discount" => $request->discount,
-            "total" => $request->qty * $request->price,
-            "description" => $request->description,
-            "product_id" => $request->product_id,
-            "store_id" => $request->store_id,
-        ]);
-        if ($transaction) {
-            $product = Product::findOrFail($request->product_id);
-            if ($transaction->type == "IN") {
+        $product = Product::findOrFail($request->product_id);
+        if ($product) {
+            if ($request->type == "IN") {
                 $product->qty = $product->qty + $request->qty;
             } else {
                 $product->qty = $product->qty - $request->qty;
             }
-            $product->save();
-        }
+            if ($product->qty > 0 and $request->type == "OUT" or $request->type == "IN") {
 
-        return response()->json(["message" => "Transaction was created!"]);
+                $transaction = Transaction::create([
+                    "type" => $request->type,
+                    "qty" => $request->qty,
+                    "price" => $request->price,
+                    "discount" => $request->discount,
+                    "total" => $request->qty * $request->price,
+                    "description" => $request->description,
+                    "product_id" => $request->product_id,
+                    "store_id" => $request->store_id,
+                ]);
+
+                $product->save();
+                return response()->json(["message" => "Transaction was created!"]);
+            } else {
+                return abort(400, 'Product out of stock!!');
+            }
+        } else {
+            return abort(404, 'Product not found!!');
+        }
     }
 
     /**

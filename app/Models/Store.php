@@ -43,6 +43,9 @@ class Store extends Model implements HasMedia
             $store->product()->each(function ($product) {
                 $product->delete(); // <-- direct deletion
             });
+            $store->receipt()->each(function ($receipt) {
+                $receipt->delete(); // <-- direct deletion
+            });
             // do the rest of the cleanup...
         });
     }

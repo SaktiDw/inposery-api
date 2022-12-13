@@ -20,9 +20,9 @@ return new class extends Migration
             $table->string("type");
             $table->integer("qty");
             $table->integer("price");
-            $table->integer("discount");
+            $table->integer("discount")->default(0);
             $table->integer('total');
-            $table->text("description");
+            $table->text("description")->nullable();
             $table->foreignIdFor(Product::class);
             $table->foreignIdFor(Store::class);
             $table->timestamps();

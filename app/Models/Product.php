@@ -37,7 +37,6 @@ class Product extends Model implements HasMedia
             $product->transaction()->each(function ($transaction) {
                 $transaction->delete(); // <-- direct deletion
             });
-            // do the rest of the cleanup...
         });
     }
 
