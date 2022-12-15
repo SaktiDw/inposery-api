@@ -110,6 +110,7 @@ class DashboardController extends Controller
                     'type',
                     'store_id'
                 )
+                    ->orderBY('month')
                     ->groupBy(
                         'year',
                         'month',
@@ -174,6 +175,7 @@ class DashboardController extends Controller
             )
             ->whereRelation('transaction', 'created_at', '>=', $from)
             ->whereRelation('transaction', 'created_at', '<=', $to)
+
             ->get();
 
         return $transaction;
