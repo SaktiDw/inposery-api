@@ -39,6 +39,6 @@ class RegisterController extends Controller
         ]);
         $user->sendEmailVerificationNotification();
 
-        Auth::guard('web')->login($user);
+        return Auth::guard('web')->login($user);
     }
 }
