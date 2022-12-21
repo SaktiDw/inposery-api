@@ -90,9 +90,11 @@ class DatabaseSeeder extends Seeder
             "qty" => $transaction2->qty
         ]);
 
-        $category = Category::factory()->create();
-        $product = Product::factory(10)->create();
+        Category::factory(10)->create();
+        $product = Product::factory(200)->create();
         $product->map(function (Product $item) {
+            $category = Category::all()->random()->id;
+            $item->category()->attach($category);
             for ($i = 0; $i < 20; $i++) {
                 $qty = random_int(1, 100);
                 $transaction = Transaction::create([
