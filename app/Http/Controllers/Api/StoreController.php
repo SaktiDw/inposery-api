@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
+use App\Http\Controllers\Controller;
 use App\Models\Store;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -21,7 +22,7 @@ class StoreController extends Controller
         $store = QueryBuilder::for(Store::class)
             ->where('user_id', auth()->user()->id)
             ->with(["media"])
-            ->allowedFilters(['name',  AllowedFilter::trashed()])
+            ->allowedFilters(['name', AllowedFilter::trashed()])
             ->defaultSort('created_at')
             ->allowedSorts(['name', 'created_at'])
             ->paginate($request->limit)

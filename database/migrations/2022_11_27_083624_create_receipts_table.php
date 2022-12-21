@@ -23,6 +23,7 @@ return new class extends Migration
             $table->integer("change");
             $table->integer("discount");
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

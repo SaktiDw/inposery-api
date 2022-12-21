@@ -1,7 +1,9 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
+use App\Http\Controllers\Controller;
+use App\Models\Category;
 use App\Models\Product;
 use App\Models\Store;
 use Illuminate\Http\Request;
@@ -9,6 +11,7 @@ use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\QueryBuilder;
+
 
 class ProductController extends Controller
 {
@@ -33,8 +36,8 @@ class ProductController extends Controller
         $store = Store::find($request->filter['store_id']) ?? abort(404, "Store not found!");
         if ($store->user_id != auth()->user()->id) return abort(403, "Unauthorized!");
         $product = QueryBuilder::for(Product::class)
-            ->with(["media", "store"])
-            ->allowedFilters(['name', 'store_id', AllowedFilter::scope('qty'), AllowedFilter::scope('withTrashed'), AllowedFilter::scope('onlyTrashed')])
+            ->with(["media", "store", "category"])
+            ->allowedFilters(['name', 'store_id', AllowedFilter::scope('qty'), AllowedFilter::exact('category.name', null), AllowedFilter::trashed()])
             ->defaultSort('created_at')
             ->allowedSorts(['name', 'created_at'])
             ->paginate($request->limit)
@@ -54,7 +57,9 @@ class ProductController extends Controller
             "name" => ["required", Rule::unique('products', 'name')->where(fn ($query) => $query->where('products.store_id', $request->store_id))],
             "sell_price" => "required|numeric|min:0",
             "store_id" => "required",
-            'image' => 'sometimes|base64dimensions:min_width=100,min_height=200|base64max:2048'
+            "image" => 'sometimes|base64dimensions:min_width=100,min_height=200|base64max:2048',
+            "categories.*" => 'array:min:1',
+            "categories.*.value" => 'string|required',
         ]);
         $store = Store::where('user_id', auth()->user()->id)->find($request->store_id);
         abort_if(!$store, 403, 'Unauthorized!');
@@ -63,11 +68,23 @@ class ProductController extends Controller
             "sell_price" => $request->sell_price,
             "store_id" => $request->store_id,
         ]);
+
         if ($request->image !== null) {
             $product->addMediaFromBase64($request->image)
                 ->usingFileName(Str::random() . '.png')
                 ->toMediaCollection($request->store_id);
+        };
+        $categories_id = [];
+        if ($request->category and count($request->category) > 0) {
+            foreach ($request->category as $key => $value) {
+                $category = Category::firstOrCreate([
+                    'name' => $request->category[$key]['value'],
+                    'slug' => Str::slug($request->category[$key]['value'])
+                ]);
+                array_push($categories_id, $category->id);
+            }
         }
+        $product->category()->syncWithoutDetaching($categories_id);
         return response(["message" => "Product was created!"], 200);
     }
 
@@ -112,6 +129,17 @@ class ProductController extends Controller
                 ->usingFileName(Str::random() . '.png')
                 ->toMediaCollection($request->store_id);
         }
+        $categories_id = [];
+        if ($request->category and count($request->category) > 0) {
+            foreach ($request->category as $key => $value) {
+                $category = Category::firstOrCreate([
+                    'name' => $request->category[$key]['value'],
+                    'slug' => Str::slug($request->category[$key]['value'])
+                ]);
+                array_push($categories_id, $category->id);
+            }
+        }
+        $product->category()->sync($categories_id);
 
         return response(["message" => "Product was updated!", "data" => $product], 200);
     }

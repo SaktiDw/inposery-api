@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Auth\SocialiteController;
 use App\Http\Controllers\ProfileController;
 use App\Models\Store;
 use App\Models\Transaction;
@@ -19,9 +20,7 @@ use Spatie\QueryBuilder\QueryBuilder;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::redirect('/', config('app.frontend_url'));
 
 Route::get('/dashboard', function () {
     $store = Store::all();
@@ -36,15 +35,22 @@ Route::middleware('auth')->group(function () {
 
 Route::get("/store/transactions", function (Request $request) {
     $transaction = QueryBuilder::for(Transaction::class)
-            ->with(["product"])
-            ->allowedFilters([
-                AllowedFilter::partial('product.name', null), 'store_id'
-            ])
-            ->defaultSort('created_at')
-            ->allowedSorts(['name', 'created_at'])
-            ->paginate($request->limit)
-            ->appends(request()->query());
+        ->with(["product"])
+        ->allowedFilters([
+            AllowedFilter::partial('product.name', null), 'store_id'
+        ])
+        ->defaultSort('created_at')
+        ->allowedSorts(['name', 'created_at'])
+        ->paginate($request->limit)
+        ->appends(request()->query());
     return view('store.transactions', ['data' => $transaction]);
 })->name('store.transactions');
+
+
+/**
+ * socialite auth
+ */
+// Route::get('/auth/{provider}', [SocialiteController::class, 'redirectToProvider']);
+Route::get('/auth/{provider}/callback', [SocialiteController::class, 'handleProvideCallback']);
 
 require __DIR__ . '/auth.php';

@@ -1,13 +1,15 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
+use App\Http\Controllers\Controller;
 use App\Models\Product;
 use App\Models\Store;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
 use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\QueryBuilder;
+
 
 class TransactionController extends Controller
 {
@@ -24,7 +26,7 @@ class TransactionController extends Controller
             ->with(["product"])
             ->allowedFilters([
                 AllowedFilter::partial('product.name', null), 'store_id',
-                AllowedFilter::scope('withTrashed'), AllowedFilter::scope('onlyTrashed')
+                AllowedFilter::trashed()
             ])
             ->defaultSort('created_at')
             ->allowedSorts(['price', 'type', 'created_at'])

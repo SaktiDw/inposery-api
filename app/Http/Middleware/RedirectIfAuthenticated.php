@@ -21,6 +21,10 @@ class RedirectIfAuthenticated
     {
         $guards = empty($guards) ? [null] : $guards;
 
+        // if (Auth::guard('web')->check()) {
+        //     return redirect()->away(env('FRONTEND_URL'));
+        // }
+
         foreach ($guards as $guard) {
             if (Auth::guard($guard)->check()) {
                 return redirect(RouteServiceProvider::HOME);

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\Image\Manipulations;
@@ -12,8 +13,9 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class Store extends Model implements HasMedia
 {
-    use HasFactory, InteractsWithMedia;
+    use HasFactory, InteractsWithMedia, SoftDeletes;
     protected $table = 'stores';
+
     protected $fillable = [
         "name", "image", "user_id"
     ];
@@ -39,12 +41,21 @@ class Store extends Model implements HasMedia
     public static function boot()
     {
         parent::boot();
-        self::deleting(function ($store) { // before delete() method call this
+        self::softDeleted(function ($store) { // before delete() method call this
             $store->product()->each(function ($product) {
                 $product->delete(); // <-- direct deletion
             });
             $store->receipt()->each(function ($receipt) {
                 $receipt->delete(); // <-- direct deletion
+            });
+            // do the rest of the cleanup...
+        });
+        self::forceDeleted(function ($store) { // before delete() method call this
+            $store->product()->withTrashed()->each(function ($product) {
+                $product->forceDelete(); // <-- direct deletion
+            });
+            $store->receipt()->each(function ($receipt) {
+                $receipt->forceDelete(); // <-- direct deletion
             });
             // do the rest of the cleanup...
         });
@@ -55,11 +66,6 @@ class Store extends Model implements HasMedia
         $this
             ->addMediaConversion('preview')
             ->fit(Manipulations::FIT_CROP, 300, 300);
-        // ->nonQueued();
-        $this
-            ->addMediaConversion('blur')
-            ->fit(Manipulations::FIT_CROP, 300, 300)
-            ->blur(50);
         // ->nonQueued();
     }
 

@@ -21,6 +21,7 @@ return new class extends Migration
             $table->integer('qty')->default(0);
             $table->foreignIdFor(Store::class);
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

@@ -26,6 +26,7 @@ return new class extends Migration
             $table->foreignIdFor(Product::class);
             $table->foreignIdFor(Store::class);
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

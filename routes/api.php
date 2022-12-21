@@ -1,21 +1,17 @@
 <?php
 
 use App\Http\Controllers\Api\AuthController;
-use App\Http\Controllers\Api\GoogleSocialiteController;
-use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\LoginController;
-use App\Http\Controllers\LogoutController;
-use App\Http\Controllers\ProductController;
-use App\Http\Controllers\ReceiptController;
-use App\Http\Controllers\RegisterController;
-use App\Http\Controllers\StoreController;
-use App\Http\Controllers\TransactionController;
-use App\Models\Store;
+use App\Http\Controllers\Api\CategoryController;
+use App\Http\Controllers\Api\SocialiteController;
+use App\Http\Controllers\Api\DashboardController;
+use App\Http\Controllers\Api\ProductController;
+use App\Http\Controllers\Api\ReceiptController;
+use App\Http\Controllers\Api\StoreController;
+use App\Http\Controllers\Api\TransactionController;
+
 use App\Models\Transaction;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
-use Laravel\Socialite\Facades\Socialite;
 use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\QueryBuilder;
 
@@ -30,19 +26,25 @@ use Spatie\QueryBuilder\QueryBuilder;
 |
 */
 
-Route::post('/login', LoginController::class);
-Route::post('/register', RegisterController::class);
-Route::post('/logout', LogoutController::class);
-Route::post('/reset-password', [AuthController::class, 'reset_password']);
-Route::post('/forgot-password', [AuthController::class, 'reset_password_link']);
-Route::post('/resend-email-verification-link', [AuthController::class, 'resend_email_verification_link']);
-Route::post('/verify-email', [AuthController::class, 'verify_email']);
-
 
 
 Route::group(['middleware' => ['web']], function () {
-    Route::get('auth/google', [GoogleSocialiteController::class, 'redirectToGoogle']);
-    Route::get('callback/google', [GoogleSocialiteController::class, 'handleCallback']);
+
+    Route::post('/login', [AuthController::class, 'login']);
+    Route::post('/register', [AuthController::class, 'register']);
+    Route::post('/logout', [AuthController::class, 'logout']);
+    Route::post('/reset-password', [AuthController::class, 'reset_password']);
+    Route::post('/forgot-password', [AuthController::class, 'reset_password_link']);
+    Route::post('/resend-email-verification-link', [AuthController::class, 'resend_email_verification_link']);
+    Route::post('/verify-email', [AuthController::class, 'verify_email']);
+
+    /**
+     * socialite auth
+     */
+    Route::get('/auth/{provider}', [SocialiteController::class, 'redirectToProvider']);
+    Route::get('/auth/{provider}/callback', [SocialiteController::class, 'handleProvideCallback']);
+
+    Route::get('/receipts/{receipt}', [ReceiptController::class, 'show'])->name('receipt.show');
 });
 
 Route::middleware(['auth:sanctum'])->group(function () {
@@ -50,14 +52,24 @@ Route::middleware(['auth:sanctum'])->group(function () {
         return auth()->user();
     });
     Route::apiResource('/stores', StoreController::class);
+    Route::get('/stores/{id}/restore', [StoreController::class, 'restore']);
+    Route::delete('/stores/{id}/delete-permanent', [StoreController::class, 'destroy_permanent']);
     Route::apiResource('/products', ProductController::class);
+    Route::get('/products/{id}/restore', [ProductController::class, 'restore']);
+    Route::delete('/products/{id}/delete-permanent', [ProductController::class, 'destroy_permanent']);
     Route::apiResource('/transactions', TransactionController::class);
-    Route::apiResource('/receipts', ReceiptController::class);
+    Route::get('/transactions/{id}/restore', [TransactionController::class, 'restore']);
+    Route::delete('/transactions/{id}/delete-permanent', [TransactionController::class, 'destroy_permanent']);
+    Route::apiResource('/receipts', ReceiptController::class)->except(['show']);
+    Route::get('/dashboard', [DashboardController::class, 'Dashboard']);
     Route::get('/getAllStoresTransaction', [DashboardController::class, 'getAllStoresTransaction']);
     Route::get('/getTopProduct', [DashboardController::class, 'getTopProduct']);
     Route::get('/getAllStoreTransaction/{store}', [DashboardController::class, 'getAllStoreTransaction']);
     Route::get('/getModalSales', [DashboardController::class, 'getModalSales']);
+    Route::apiResource('/categories', CategoryController::class);
 });
+
+
 
 Route::get('/test', function (Request $request) {
     $transaction = QueryBuilder::for(Transaction::class)
@@ -76,7 +88,7 @@ Route::get('/ko', function () {
     $store = Transaction::whereIn('store_id', [3, 9])->groupBy('year', 'month', 'day')->get();
     return $store;
 });
-Route::get('/dashboard', [DashboardController::class, 'Dashboard']);
+
 // require __DIR__ . '/auth.php';
 // ->groupBy(DB::raw('Date(created_at)'))
 // where('created_at', '>=', \Carbon\Carbon::now()->subMonth())
