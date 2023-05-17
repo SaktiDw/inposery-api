@@ -60,12 +60,12 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::apiResource('/transactions', TransactionController::class);
     Route::get('/transactions/{id}/restore', [TransactionController::class, 'restore']);
     Route::delete('/transactions/{id}/delete-permanent', [TransactionController::class, 'destroy_permanent']);
-    Route::apiResource('/receipts', ReceiptController::class)->except(['show']);
+    Route::apiResource('/receipts', ReceiptController::class)->except(['update', 'destroy']);
     Route::get('/dashboard', [DashboardController::class, 'Dashboard']);
-    Route::get('/getAllStoresTransaction', [DashboardController::class, 'getAllStoresTransaction']);
     Route::get('/getTopProduct', [DashboardController::class, 'getTopProduct']);
-    Route::get('/getAllStoreTransaction/{store}', [DashboardController::class, 'getAllStoreTransaction']);
-    Route::get('/getModalSales', [DashboardController::class, 'getModalSales']);
+    // Route::get('/getAllStoresTransaction', [DashboardController::class, 'getAllStoresTransaction']);
+    // Route::get('/getAllStoreTransaction/{store}', [DashboardController::class, 'getAllStoreTransaction']);
+    // Route::get('/getModalSales', [DashboardController::class, 'getModalSales']);
     Route::apiResource('/categories', CategoryController::class);
 });
 

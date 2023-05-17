@@ -9,11 +9,7 @@ use Spatie\QueryBuilder\QueryBuilder;
 
 class ReceiptController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+
     public function index(Request $request)
     {
         $receipts = QueryBuilder::for(Receipt::class)
@@ -26,12 +22,6 @@ class ReceiptController extends Controller
         return $receipts;
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
     {
         $request->validate([
@@ -55,37 +45,18 @@ class ReceiptController extends Controller
         return response()->json(["message" => "Receipt was created!"]);
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Receipt  $receipt
-     * @return \Illuminate\Http\Response
-     */
     public function show(Receipt $receipt)
     {
         return $receipt->load(['store', 'store.media']);
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Receipt  $receipt
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Receipt $receipt)
-    {
-        //
-    }
+    // public function update(Request $request, Receipt $receipt)
+    // {
+    //     //
+    // }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Receipt  $receipt
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Receipt $receipt)
-    {
-        //
-    }
+    // public function destroy(Receipt $receipt)
+    // {
+    //     //
+    // }
 }

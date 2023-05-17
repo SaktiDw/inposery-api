@@ -75,6 +75,22 @@ class ProductTest extends TestCase
         ]);
         $response->assertStatus(200);
     }
+    public function test_failed_create_product_if_already_exist()
+    {
+        $user = User::find(1);
+        Sanctum::actingAs($user);
+        Product::create([
+            'name' => 'New product',
+            'sell_price' => 10000,
+            'store_id' => 1,
+        ]);
+        $response = $this->postJson('/api/products/', [
+            'name' => 'New product',
+            'sell_price' => 10000,
+            'store_id' => 1,
+        ]);
+        $response->assertStatus(422);
+    }
     public function test_update_product()
     {
         $user = User::find(1);

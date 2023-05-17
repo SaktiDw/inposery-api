@@ -42,18 +42,18 @@ class AuthController extends Controller
 
     public function logout()
     {
-        if (EnsureFrontendRequestsAreStateful::fromFrontend(request())) {
-            // Auth::guard('web')->logout();
-            auth('web')->logout();
+        // if (EnsureFrontendRequestsAreStateful::fromFrontend(request())) {
+        //     // Auth::guard('web')->logout();
+        //     auth('web')->logout();
 
-            request()->session()->invalidate();
+        //     request()->session()->invalidate();
 
-            request()->session()->regenerateToken();
-            return;
-        } else {
-            // Revoke token
-            return auth()->logout();
-        }
+        //     request()->session()->regenerateToken();
+        //     return;
+        // } else {
+        // Revoke token
+        return auth()->logout();
+        // }
     }
 
     public function register()

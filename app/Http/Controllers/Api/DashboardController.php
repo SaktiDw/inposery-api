@@ -12,49 +12,65 @@ use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
 {
-    public function getAllStoresTransaction(Request $request)
-    {
-        $store = Store::whereIn('id', explode(',', $request->id))->where('user_id', auth()->user()->id)->get();
+    // public function getAllStoresTransaction(Request $request)
+    // {
+    //     $store = Store::whereIn('id', explode(',', $request->id))->where('user_id', auth()->user()->id)->get();
 
-        $from = isset($request->from) ? Carbon::parse($request->from) : Carbon::parse("2000-01-01T00:00:00.000000Z");
-        $to = isset($request->to) ? Carbon::parse($request->to) : Carbon::now();
-        $transaction = Transaction::with(['store' => function ($q) {
-            $q->where('user_id', auth()->user()->id);
-        }])
-            ->whereIn('store_id', explode(',', $request->id))
-            ->where('type', $request->type)
-            ->where('created_at', '>=', $from)
-            ->where('created_at', '<=', $to)
-            ->select(
-                DB::raw('SUM(total) as total'),
-                DB::raw("EXTRACT(YEAR FROM `created_at`) as year"),
-                DB::raw("EXTRACT(MONTH FROM `created_at`) as month"),
-                // DB::raw("EXTRACT(DAY FROM `created_at`) as day"),
-                // 'created_at',
-                'type',
-                'store_id'
-            )
-            ->groupBy(
-                'year',
-                'month',
-                // 'day',
-                // 'created_at',
-                "type",
-                'store_id'
-            )
-            ->get();
-        if (!$transaction->count() == 0) return abort(403, "Opps");
-        // $group = $transaction->groupBy(['day']);
-        // if (!$transaction->count() > 0) return response(["message" => "Transactions not found!"], 404);
-        // return $group->all();
-        return $transaction;
-    }
-    public function scopeFrom(Builder $query, $date): Builder
-    {
-        return $query->where('created_at', '<=', Carbon::parse($date));
-    }
+    //     $from = isset($request->from) ? Carbon::parse($request->from) : Carbon::parse("2000-01-01T00:00:00.000000Z");
+    //     $to = isset($request->to) ? Carbon::parse($request->to) : Carbon::now();
+    //     $transaction = Transaction::with(['store' => function ($q) {
+    //         $q->where('user_id', auth()->user()->id);
+    //     }])
+    //         ->whereIn('store_id', explode(',', $request->id))
+    //         ->where('type', $request->type)
+    //         ->where('created_at', '>=', $from)
+    //         ->where('created_at', '<=', $to)
+    //         ->select(
+    //             DB::raw('SUM(total) as total'),
+    //             DB::raw("EXTRACT(YEAR FROM `created_at`) as year"),
+    //             DB::raw("EXTRACT(MONTH FROM `created_at`) as month"),
+    //             // DB::raw("EXTRACT(DAY FROM `created_at`) as day"),
+    //             // 'created_at',
+    //             'type',
+    //             'store_id'
+    //         )
+    //         ->groupBy(
+    //             'year',
+    //             'month',
+    //             // 'day',
+    //             // 'created_at',
+    //             "type",
+    //             'store_id'
+    //         )
+    //         ->get();
+    //     if (!$transaction->count() == 0) return abort(403, "Opps");
+    //     // $group = $transaction->groupBy(['day']);
+    //     // if (!$transaction->count() > 0) return response(["message" => "Transactions not found!"], 404);
+    //     // return $group->all();
+    //     return $transaction;
+    // }
+    // public function scopeFrom(Builder $query, $date): Builder
+    // {
+    //     return $query->where('created_at', '<=', Carbon::parse($date));
+    // }
 
-
+    // public function getModalSales(Request $request)
+    // {
+    //     $from = isset($request->from) ? Carbon::parse($request->from) : Carbon::parse("2000-01-01T00:00:00.000000Z");
+    //     $to = isset($request->to) ? Carbon::parse($request->to) : Carbon::now();
+    //     $transaction =
+    //         Transaction::whereIn('store_id', explode(',', $request->id))
+    //         // ->where('type', $request->type)
+    //         ->where('created_at', '>=', $from)
+    //         ->where('created_at', '<=', $to)
+    //         ->select(DB::raw('SUM(total) as total'), 'type')
+    //         ->groupBy(
+    //             'type'
+    //         )->orderBy('total', 'DESC')
+    //         // ->paginate($request->limit ?? 5);
+    //         ->get($request->limit);
+    //     return $transaction;
+    // }
 
     public function getTopProduct(Request $request)
     {
@@ -73,23 +89,7 @@ class DashboardController extends Controller
             ->get();
         return $transaction;
     }
-    public function getModalSales(Request $request)
-    {
-        $from = isset($request->from) ? Carbon::parse($request->from) : Carbon::parse("2000-01-01T00:00:00.000000Z");
-        $to = isset($request->to) ? Carbon::parse($request->to) : Carbon::now();
-        $transaction =
-            Transaction::whereIn('store_id', explode(',', $request->id))
-            // ->where('type', $request->type)
-            ->where('created_at', '>=', $from)
-            ->where('created_at', '<=', $to)
-            ->select(DB::raw('SUM(total) as total'), 'type')
-            ->groupBy(
-                'type'
-            )->orderBy('total', 'DESC')
-            // ->paginate($request->limit ?? 5);
-            ->get($request->limit);
-        return $transaction;
-    }
+
 
     public function Dashboard(Request $request)
     {
@@ -117,7 +117,6 @@ class DashboardController extends Controller
                         'store_id'
                     );
             }])
-
             ->withSum(
                 [
                     'transaction as total_in' => function ($query) use ($type) {

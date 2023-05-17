@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\Auth\SocialiteController;
+use App\Http\Controllers\Api\SocialiteController;
 use App\Http\Controllers\ProfileController;
 use App\Models\Store;
 use App\Models\Transaction;
@@ -25,7 +25,7 @@ Route::redirect('/', config('app.frontend_url'));
 Route::get('/dashboard', function () {
     $store = Store::all();
     return view('dashboard', ['store' => $store]);
-})->middleware(['auth', 'verified'])->name('dashboard');
+})->middleware(['auth'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

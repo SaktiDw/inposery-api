@@ -47,10 +47,11 @@ class TransactionController extends Controller
             "type" => "required",
             "store_id" => "required",
             "transaction.*" => 'array|min:1',
-            "transaction.*.qty" => "required|numeric",
-            "transaction.*.price" => "required|numeric",
-            "transaction.*.discount" => "required|numeric",
+            "transaction.*.qty" => "required|numeric|min:0",
+            "transaction.*.price" => "required|numeric|min:0",
+            "transaction.*.discount" => "numeric|min:0",
             "transaction.*.description" => "max:250",
+            "transaction.*.customer" => "max:250",
             "transaction.*.product_id" => "required",
         ]);
         foreach ($request->transaction as $key => $value) {
@@ -72,6 +73,16 @@ class TransactionController extends Controller
             }
             $product->save();
             if ($product->qty >= 0) {
+                if (isset($request->transaction[$key]['customer'])) {
+                    if ($request->type == "IN") {
+                        $customer = auth()->user()->name;
+                    } else {
+                        $customer = $request->transaction[$key]['customer'];
+                    }
+                } else {
+                    $customer = "random";
+                }
+
                 $transaction = Transaction::create([
                     "type" => $request->type,
                     "store_id" => $request->store_id,
@@ -80,6 +91,7 @@ class TransactionController extends Controller
                     "discount" => $request->transaction[$key]['discount'],
                     "total" => $request->transaction[$key]['qty'] * $request->transaction[$key]['price'],
                     "description" => $request->transaction[$key]['description'],
+                    "customer" => $customer,
                     "product_id" => $request->transaction[$key]['product_id'],
                 ]);
                 // if ($transaction) {

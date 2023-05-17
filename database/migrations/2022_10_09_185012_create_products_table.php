@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('name');
             $table->integer('sell_price')->default(0);
             $table->integer('qty')->default(0);
-            $table->foreignIdFor(Store::class);
+            $table->foreignIdFor(Store::class)->constrained()->cascadeOnUpdate()->cascadeOnDelete();
             $table->timestamps();
             $table->softDeletes();
         });

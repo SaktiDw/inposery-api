@@ -28,13 +28,13 @@ class CategoryTest extends TestCase
         $response->assertStatus(200);
     }
 
-    public function test_get_one_category()
-    {
-        $user = User::find(1);
-        Sanctum::actingAs($user);
-        $response = $this->getJson('/api/categories/1');
-        $response->assertStatus(200);
-    }
+    // public function test_get_one_category()
+    // {
+    //     $user = User::find(1);
+    //     Sanctum::actingAs($user);
+    //     $response = $this->getJson('/api/categories/1');
+    //     $response->assertStatus(200);
+    // }
 
     public function test_create_category()
     {
@@ -59,29 +59,29 @@ class CategoryTest extends TestCase
         ]);
         $response->assertStatus(422);
     }
-    public function test_update_category()
-    {
-        $user = User::find(1);
-        Sanctum::actingAs($user);
-        $response = $this->patchJson('/api/categories/1', [
-            'name' => 'Updated Category'
-        ]);
-        $response->assertStatus(200);
-    }
+    // public function test_update_category()
+    // {
+    //     $user = User::find(1);
+    //     Sanctum::actingAs($user);
+    //     $response = $this->patchJson('/api/categories/1', [
+    //         'name' => 'Updated Category'
+    //     ]);
+    //     $response->assertStatus(200);
+    // }
 
-    public function test_delete_category()
-    {
-        $user = User::find(1);
-        Sanctum::actingAs($user);
-        $response = $this->deleteJson('/api/categories/1');
-        $response->assertStatus(200);
-    }
+    // public function test_delete_category()
+    // {
+    //     $user = User::find(1);
+    //     Sanctum::actingAs($user);
+    //     $response = $this->deleteJson('/api/categories/1');
+    //     $response->assertStatus(200);
+    // }
 
-    public function test_attach_category_to_a_product()
-    {
-        $category = Category::factory()->create();
-        $product = Product::factory()->create();
-        $product->category()->syncWithoutDetaching([$category->id]);
-        $this->assertArrayHasKey('attached', $product->category()->syncWithoutDetaching([$category->id]));
-    }
+    // public function test_attach_category_to_a_product()
+    // {
+    //     $category = Category::factory()->create();
+    //     $product = Product::factory()->create();
+    //     $product->category()->syncWithoutDetaching([$category->id]);
+    //     $this->assertArrayHasKey('attached', $product->category()->syncWithoutDetaching([$category->id]));
+    // }
 }

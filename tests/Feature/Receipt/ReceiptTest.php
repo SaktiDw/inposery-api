@@ -51,13 +51,34 @@ class ReceiptTest extends TestCase
     //     $response = $this->getJson('/api/receipts?filter[store_id]=1&filter[product.name]=a&filter[onlyTrashed]=true');
     //     $response->assertStatus(200);
     // }
-    // public function test_get_one_receipt()
-    // {
-    //     $user = User::find(1);
-    //     Sanctum::actingAs($user);
-    //     $response = $this->getJson('/api/receipts/1');
-    //     $response->assertStatus(200);
-    // }
+    public function test_get_one_receipt()
+    {
+        $user = User::find(1);
+        Sanctum::actingAs($user);
+        $product = Product::find(1);
+        Receipt::create([
+            "change" => 0,
+            "discount" => 0,
+            "payment" => $product->qty * 10 * $product->sell_price,
+            'store_id' => $product->store_id,
+            "total" => $product->qty * 10 * $product->sell_price,
+            "products" => json_encode([
+                [
+                    "id" => $product->id,
+                    "name" => $product->name,
+                    "sell_price" => $product->sell_price,
+                    "qty" => $product->qty,
+                    "orderQty" => 10,
+                    "customer" => [
+                        "name" => "random",
+                        "active" => "true"
+                    ],
+                ]
+            ])
+        ]);
+        $response = $this->getJson('/api/receipts/1');
+        $response->assertStatus(200);
+    }
     // public function test_failed_get_one_receipt_if_doesnt_belong_to_you()
     // {
     //     $user = User::find(1);
@@ -115,7 +136,7 @@ class ReceiptTest extends TestCase
     public function test_soft_delete_receipt()
     {
         $user = User::find(1);
-        Sanctum::actingAs($user);
+        // Sanctum::actingAs($user);
         $receipt = Receipt::factory()->create();
         $this->assertTrue($receipt->delete());
         // $response = $this->deleteJson('/api/receipts/' . $receipt->id);
@@ -132,7 +153,7 @@ class ReceiptTest extends TestCase
     public function test_restore_receipt()
     {
         $user = User::find(1);
-        Sanctum::actingAs($user);
+        // Sanctum::actingAs($user);
         $receipt = Receipt::factory()->create();
         $receipt->delete();
         $this->assertTrue($receipt->restore());
@@ -151,7 +172,7 @@ class ReceiptTest extends TestCase
     public function test_permanent_delete_receipt()
     {
         $user = User::find(1);
-        Sanctum::actingAs($user);
+        // Sanctum::actingAs($user);
         $receipt = Receipt::factory()->create();
         $this->assertTrue($receipt->forceDelete());
         // $response = $this->deleteJson('/api/receipts/' . $receipt->id . '/delete-permanent');

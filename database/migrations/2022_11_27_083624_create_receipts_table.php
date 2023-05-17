@@ -16,7 +16,7 @@ return new class extends Migration
     {
         Schema::create('receipts', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(Store::class);
+            $table->foreignIdFor(Store::class)->constrained()->cascadeOnUpdate()->cascadeOnDelete();
             $table->json("products");
             $table->integer("total");
             $table->integer("payment");

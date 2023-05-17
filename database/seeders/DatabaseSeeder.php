@@ -91,7 +91,7 @@ class DatabaseSeeder extends Seeder
         ]);
 
         Category::factory(10)->create();
-        $product = Product::factory(200)->create();
+        $product = Product::factory(10)->create();
         $product->map(function (Product $item) {
             $category = Category::all()->random()->id;
             $item->category()->attach($category);
@@ -109,7 +109,7 @@ class DatabaseSeeder extends Seeder
                     'created_at' => Carbon::today()->subDays(rand(0, 180))
                 ]);
                 $item->update([
-                    "qty" => $transaction->qty
+                    "qty" => $transaction->qty + $item->qty
                 ]);
             }
         });

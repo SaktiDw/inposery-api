@@ -20,12 +20,12 @@ class ProductController extends Controller
         return $query->where('qty', '<', $qty);
     }
 
-    public function storeId($query, $store_id)
-    {
-        $store = Store::findOrFail($store_id);
-        if ($store->user_id != auth()->user()->id) return abort(403, "Unauthorized");
-        return $query->where('store_id', '=', $store_id);
-    }
+    // public function storeId($query, $store_id)
+    // {
+    //     $store = Store::findOrFail($store_id);
+    //     if ($store->user_id != auth()->user()->id) return abort(403, "Unauthorized");
+    //     return $query->where('store_id', '=', $store_id);
+    // }
     /**
      * Display a listing of the resource.
      *
@@ -36,6 +36,7 @@ class ProductController extends Controller
         $store = Store::find($request->filter['store_id']) ?? abort(404, "Store not found!");
         if ($store->user_id != auth()->user()->id) return abort(403, "Unauthorized!");
         $product = QueryBuilder::for(Product::class)
+            ->whereRelation('store', 'user_id', auth()->user()->id)
             ->with(["media", "store", "category"])
             ->allowedFilters(['name', 'store_id', AllowedFilter::scope('qty'), AllowedFilter::exact('category.name', null), AllowedFilter::trashed()])
             ->defaultSort('created_at')
@@ -112,7 +113,7 @@ class ProductController extends Controller
             "name" => ["required", Rule::unique('products', 'name')->where(fn ($query) => $query->where('products.store_id', $request->store_id))->ignore($product->id)],
             "sell_price" => "required|numeric|min:0",
             "store_id" => "required",
-            "qty" => "number"
+            "qty" => "numeric|min:0"
         ]);
         if ($product->store_id != $request->store_id) return abort(403, "Unauthorized");
         $product->update([
@@ -141,7 +142,7 @@ class ProductController extends Controller
         }
         $product->category()->sync($categories_id);
 
-        return response(["message" => "Product was updated!", "data" => $product], 200);
+        return response(["message" => "Product was updated!"], 200);
     }
 
     /**

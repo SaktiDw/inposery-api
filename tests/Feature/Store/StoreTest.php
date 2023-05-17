@@ -82,6 +82,7 @@ class StoreTest extends TestCase
         ]);
         $response->assertStatus(200);
     }
+
     public function test_failed_create_store_if_already_exist()
     {
         $user = User::find(1);

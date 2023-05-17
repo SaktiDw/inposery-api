@@ -22,9 +22,10 @@ return new class extends Migration
             $table->integer("price");
             $table->integer("discount")->default(0);
             $table->integer('total');
+            $table->string("customer")->default("random");
             $table->text("description")->nullable();
-            $table->foreignIdFor(Product::class);
-            $table->foreignIdFor(Store::class);
+            $table->foreignIdFor(Product::class)->constrained()->cascadeOnUpdate()->cascadeOnDelete();
+            $table->foreignIdFor(Store::class)->constrained()->cascadeOnUpdate()->cascadeOnDelete();
             $table->timestamps();
             $table->softDeletes();
         });

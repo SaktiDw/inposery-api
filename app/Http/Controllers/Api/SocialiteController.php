@@ -49,7 +49,7 @@ class SocialiteController extends Controller
                 'email' => $newUser->email,
                 'password' => 'themapunleashtoyoufolowingfolowing',
             ];
-            Auth::guard('web')->attempt($newUser, true);
+            Auth::guard('web')->attempt($login, true);
         }
 
 
